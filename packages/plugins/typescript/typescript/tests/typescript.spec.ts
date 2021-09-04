@@ -1111,7 +1111,7 @@ describe('TypeScript', () => {
         A
         B
       }
-      
+
       type MyType {
         required: MyEnum!
         optional: MyEnum
@@ -1146,7 +1146,7 @@ describe('TypeScript', () => {
           A
           B
         }
-        
+
         type MyType {
           required: MyEnum!
           optional: MyEnum
@@ -1182,7 +1182,7 @@ describe('TypeScript', () => {
           A
           B
         }
-        
+
         type MyType {
           required: MyEnum!
           optional: MyEnum
@@ -2908,6 +2908,24 @@ describe('TypeScript', () => {
         export type MyInput = {
           a?: Maybe<Scalars['String']>;
           b?: Scalars['String'];
+          c?: Maybe<Scalars['String']>;
+          d: Scalars['String'];
+        };
+    `);
+
+      validateTs(result);
+    });
+
+    it('Should generate non optional type for input with default value and nonNullableWithDefaultValueIsNotOptional - ##6559', async () => {
+      const schema = buildSchema(
+        `input MyInput { a: String = "default", b: String! = "default" }`
+      );
+      const result = await plugin(schema, [], { nonNullableWithDefaultValueIsNotOptional: { defaultValue: true } }, { outputFile: '' });
+
+      expect(result.content).toBeSimilarStringTo(`
+        export type MyInput = {
+          a?: Maybe<Scalars['String']>;
+          b: Scalars['String'];
           c?: Maybe<Scalars['String']>;
           d: Scalars['String'];
         };
